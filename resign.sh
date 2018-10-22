@@ -56,7 +56,12 @@ for i in *.ipa; do
     zip -qr $i Payload
     rm -rf Payload
     #resign the app
-    fastlane sigh resign $i
+    if [ -z "$2" ]
+    then
+        fastlane sigh resign
+    else
+        fastlane sigh resign $i --signing_identity $2
+    fi
 done
 
 
