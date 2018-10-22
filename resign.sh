@@ -3,6 +3,11 @@ then
     echo "No argument supplied. Choose major : minor : patch for version increment"
     exit 1
 fi
+if [[ "$1" != "major" && "$1" != "minor" && "$1" != "patch" ]]
+then
+    echo "Parameter 1 should be major | minor | patch to indicate how to increment the build number"
+    exit 1
+fi
 
 for i in *.ipa; do
     [ -f "$i" ] || break
