@@ -58,7 +58,7 @@ for i in *.ipa; do
     #resign the app
     if [ -z "$2" ]
     then
-        fastlane sigh resign
+        fastlane sigh resign $i
     else
         fastlane sigh resign $i --signing_identity $2
     fi
