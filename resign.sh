@@ -9,9 +9,20 @@ then
     exit 1
 fi
 
+#check param 2 Should be .mobileprovision file
+if [ -z "$2" ]
+then
+    echo "Need to supply the new mobile provision as parameter 2"
+    exit 1
+elif [[ $2 != *.mobileprovision ]]
+then
+    echo "Parameter 2 is not a .mobileprovision file"
+    exit 1
+fi
+
 #ask for the signing identity to use
 security find-identity -v -p codesigning
-echo "Please select which codesign profile to use. Input the name (i.e 'iPhone Developer: Soluis Technologies Ltd' without the ID)."
+echo "Please select which codesign profile to use. Input the name (i.e 'iPhone Developer: Soluis Technologies Ltd' not the HEX)."
 read signingID
 
 for i in *.ipa; do
@@ -60,6 +71,9 @@ for i in *.ipa; do
 
     #write new version number
     /usr/libexec/PlistBuddy -c "Set CFBundleVersion ${bundleVersion}" Payload/*.app/Info.plist
+
+    #copy mobile provision
+    cp $2 Payload/*.app/embedded.mobileprovision
 
     #do codesigning
     cd Payload/
