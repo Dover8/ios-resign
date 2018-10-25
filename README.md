@@ -5,6 +5,5 @@ Batch script that will scrape the folder it is run in for .ipa files, increment 
 Takes parameters:
 
  - major | minor | patch - the number to increment
- - [Optional] Signing identity key - the HEX code of the signing identity to use.
 
-If you don't supply the signing key as a parameter, it will ask you for it during the process. 
+It will then ask for input on which signing profile to use from your machine. WARNING: It will use this same profile for **all** ipa files in the folder. 
