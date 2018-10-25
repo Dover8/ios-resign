@@ -9,10 +9,17 @@ then
     exit 1
 fi
 
+#ask for the signing identity to use
+security find-identity -v -p codesigning
+echo "Please select which codesign profile to use. Input the name (i.e 'iPhone Developer: Soluis Technologies Ltd' without the ID)."
+read signingID
+
 for i in *.ipa; do
     [ -f "$i" ] || break
     echo "Parsing app $i"
     unzip -q -o $i #unzip the file
+    rm -rf Payload/*.app/_CodeSignature
+
     bundleVersion=$(/usr/libexec/PlistBuddy -c 'Print CFBundleVersion' Payload/*.app/Info.plist) #final the bundle version
 
     #read it into values
@@ -51,17 +58,23 @@ for i in *.ipa; do
 
     echo "App $i incremented to $bundleVersion"
 
-    #repackage the app
+    #write new version number
     /usr/libexec/PlistBuddy -c "Set CFBundleVersion ${bundleVersion}" Payload/*.app/Info.plist
+
+    #do codesigning
+    cd Payload/
+    codesign -d --entitlements - *.app > entitlements.plist
+    cd ..
+    mv Payload/entitlements.plist entitlements.plist
+
+    codesign -f -s "${signingID}" '--entitlements' 'entitlements.plist' Payload/*.app
+
+    #repackage
     zip -qr $i Payload
+
+    #clean up, aisle $i
     rm -rf Payload
-    #resign the app
-    if [ -z "$2" ]
-    then
-        fastlane sigh resign $i
-    else
-        fastlane sigh resign $i --signing_identity $2
-    fi
+    rm entitlements.plist
 done
 
 
