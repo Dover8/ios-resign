@@ -28,7 +28,7 @@ read signingID
 for i in *.ipa; do
     [ -f "$i" ] || break
     echo "Parsing app $i"
-    unzip -q -o $i #unzip the file
+    unzip -q -o "$i" #unzip the file
     rm -rf Payload/*.app/_CodeSignature
 
     bundleVersion=$(/usr/libexec/PlistBuddy -c 'Print CFBundleVersion' Payload/*.app/Info.plist) #final the bundle version
@@ -84,7 +84,7 @@ for i in *.ipa; do
     codesign -f -s "${signingID}" '--entitlements' 'entitlements.plist' Payload/*.app
 
     #repackage
-    zip -qr $i Payload
+    zip -qr "$i" Payload
 
     #clean up, aisle $i
     rm -rf Payload
