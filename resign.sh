@@ -34,7 +34,7 @@ for i in *.ipa; do
     bundleVersion=$(/usr/libexec/PlistBuddy -c 'Print CFBundleVersion' Payload/*.app/Info.plist) #final the bundle version
 
     #read it into values
-    IFS="." read major minor patch <<< "$bundleVersion"
+    IFS="." read major minor patch discard <<< "$bundleVersion"
 
     if [ -z "$major" ]
     then
